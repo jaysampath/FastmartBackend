@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Otp for verification</title>
+<!-- <link rel="stylesheet" th:href="@{otpPage.css}" />  --> 
+<style>
+.mailDiv {
+	margin: 1rem auto;
+	padding: 1rem;
+	border: 1px solid black;
+	text-align: center;
+	width: 60rem;
+	height: auto;
+
+}
+
+.storeImage {
+	width: 30rem;
+	height: 20rem;
+	margin-bottom:2rem;
+}
+
+.title {
+	text-align: center;
+}
+</style>
+</head>
+<body>
+	<div class="mailDiv">
+		<div>
+			<h1>FastMart</h1>
+			<img
+				src="https://drive.google.com/uc?export=view&id=1HfcSBWg1NeKG7nx4Rph0sKAN6VnfPF5w"
+				alt="store image" class="storeImage" />
+		</div>
+		<div>
+		   <p> 	Welcome <b th:text="${email}"></b> </p>
+		</div>
+		<div>
+		  <p>	Please enter this OTP for verification of your email. Your OTP is <b
+				th:text="${otp}"></b>  </p>
+		</div>
+
+	</div>
+
+
+</body>
+</html>

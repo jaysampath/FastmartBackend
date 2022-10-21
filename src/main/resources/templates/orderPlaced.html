@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Registration success message</title>
+<style>
+.mailDiv {
+	margin: 1rem auto;
+	padding: 1rem;
+	border: 1px solid black;
+	text-align: center;
+	width: 70rem;
+	height: auto;
+}
+
+.title {
+	text-align: center;
+}
+
+.Thanks {
+	color: green;
+}
+
+.orderItemsTitleDiv {
+	float: left;
+}
+
+.orderItemDiv {
+	width: 35rem;
+	height:8rem;
+	margin: 1rem auto;
+	padding: 1rem;
+	border: 1px solid black;
+	text-align:center;
+}
+
+.orderItemImage {
+	width: 6rem;
+	height: 6rem;
+	margin-right:3rem;
+	margin-left:1rem;
+}
+
+li {
+	list-style: none;
+	display:flex;
+	justify-content:space-around;
+}
+.addressDiv{
+  margin:1rem auto;
+  
+}
+.orderItemName, .orderItemQuantity{
+   margin-right:3rem;
+}
+
+</style>
+</head>
+<body>
+	<div class="mailDiv">
+		<div>
+			<h1>FastMart</h1>
+			<h2 class="Thanks">Thank you for shopping with us!!</h2>
+			<p>
+				Hey <b th:text="${email}"></b> , your order is successfully placed.
+			</p>
+			<p>We will try to ship your products as soon as possible. Once
+				shipped, you will receive your products within 5-7 business days.</p>
+			<hr />
+			<h3>
+				Order Amount: <b th:text="${amount}"></b>
+			</h3>
+			<hr />
+			<h2>Your order Items</h2>
+		</div>
+		<div>
+			<ul th:each="item : ${items}"> 
+				<li class="orderItemDiv">
+				<img
+					th:src="@{${srcUrl+item.orderItemImageUrl}}" alt="order item"
+					class="orderItemImage" />
+					<h3 th:text="${item.orderItemName}" class="orderItemName"></h3>
+					<p class="orderItemQuantity">
+						Quantity: <b th:text="${item.orderItemQuantity}"></b>
+					</p>
+					<p class="orderItemPrice">
+						price: <b th:text="${item.orderItemPrice}"></b>
+					</p></li>
+			</ul>
+
+		</div>
+		<hr />
+		<div class="addressDiv">
+		   <h2>Shipping Address</h2>
+		   <p> <b>  Customer Name: </b> <span th:text="@{${orderAddress.name}}"></span> </p>
+		   <p> <b>  Mobile Number </b> <span th:text="@{${orderAddress.mobileNumber}}"></span> </p>
+		   <p> <b>  Address: </b> <span th:text="@{${orderAddress.address}}"></span> </p>
+		   <p> <b>  City: </b> <span th:text="@{${orderAddress.city}}"></span> </p>
+		   <p> <b>  State: </b> <span th:text="@{${orderAddress.state}}"></span> </p>
+		   <p> <b>  Pin code: </b> <span th:text="@{${orderAddress.pincode}}"></span> </p>
+		</div>
+		<hr />
+		<div>
+			<p>Keep track of your orders here: https://fastmart-react.herokuapp.com/user-orders</p>
+		</div>
+
+	</div>
+
+
+</body>
+</html>
