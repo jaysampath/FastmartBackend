@@ -9,8 +9,6 @@ public interface UserDao {
 
 	boolean checkUserExists(String userEmail);
 
-	boolean isUserAuthenticated(LoginRequest loginRequest);
-
 	User getUserByEmail(String email);
 	
 	User updateUserPassword(String email,String password);

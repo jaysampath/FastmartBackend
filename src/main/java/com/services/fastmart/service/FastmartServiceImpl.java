@@ -27,9 +27,6 @@ import com.services.fastmart.exception.UserActionException;
 public class FastmartServiceImpl implements FastmartService {
 
     @Autowired
-    private UserDao usersDao;
-
-    @Autowired
     private ProductsDao productsDao;
 
     @Autowired
@@ -42,60 +39,6 @@ public class FastmartServiceImpl implements FastmartService {
     private EmailService emailService;
 
     private final static Logger logger = LoggerFactory.getLogger(FastmartServiceImpl.class);
-
-
-    @Override
-    public User saveNewUser(User user) {
-
-        boolean checkIfExisting = usersDao.checkUserExists(user.getUserEmail());
-        if (checkIfExisting) {
-            throw new UserActionException("user already exists");
-        }
-        User newUser = usersDao.registerUser(user);
-        try {
-            emailService.sendSuccessfulSignupEmail(user.getUserEmail());
-        } catch (MessagingException e) {
-            throw new EmailActionException(e.getMessage());
-        }
-        return newUser;
-    }
-
-    @Override
-    public User getUserByEmail(String userEmail) {
-        User user = usersDao.getUserByEmail(userEmail);
-        if (user == null) {
-            throw new UserActionException("user not found");
-        }
-        return user;
-    }
-
-    @Override
-    public boolean checkUserIsAuth(LoginRequest loginRequest) {
-        boolean response = usersDao.isUserAuthenticated(loginRequest);
-        if (!response) {
-            throw new UserActionException("The email and password combination is incorrect");
-        }
-        return true;
-    }
-
-    @Override
-    public String checkExistingUser(String email) {
-        boolean check = usersDao.checkUserExists(email);
-        if (check) {
-            throw new UserActionException("user already exists. please login with the same.");
-        }
-        return "no";
-    }
-
-    @Override
-    public User updateUserPassword(String email, String password) {
-        User user = usersDao.updateUserPassword(email, password);
-        if (user == null) {
-            throw new UserActionException("invalid user email");
-        }
-        return user;
-    }
-
 
     @Override
     public List<Product> getAllItems() {
@@ -168,10 +111,6 @@ public class FastmartServiceImpl implements FastmartService {
 
     @Override
     public Order saveOrder(Order order) {
-        boolean userCheck = usersDao.checkUserExists(order.getUserEmail());
-        if (!userCheck) {
-            throw new UserActionException("user email invalid. please try again");
-        }
         double orderAmount = 0;
         List<OrderProduct> orderProducts = order.getOrderProducts();
         for (OrderProduct oItem : orderProducts) {

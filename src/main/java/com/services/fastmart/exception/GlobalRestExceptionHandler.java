@@ -33,15 +33,15 @@ public class GlobalRestExceptionHandler {
 		return new ResponseEntity<ResponseJson>(response,HttpStatus.NOT_ACCEPTABLE);
 	}
 	
-//	@ExceptionHandler
-//	public ResponseEntity<ResponseJson> handleException(Exception exc){
-//		ResponseJson response = new ResponseJson(
-//				HttpStatus.BAD_REQUEST.value(),
-//				exc.getMessage(),
-//				String.valueOf(sdf.format(System.currentTimeMillis()))
-//				);
-//		return new ResponseEntity<ResponseJson>(response,HttpStatus.NOT_ACCEPTABLE);
-//	}
+	@ExceptionHandler
+	public ResponseEntity<ResponseJson> handleException(Exception exc){
+		ResponseJson response = new ResponseJson(
+				HttpStatus.INTERNAL_SERVER_ERROR.value(),
+				exc.getMessage(),
+				String.valueOf(sdf.format(System.currentTimeMillis()))
+				);
+		return new ResponseEntity<ResponseJson>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 	
 	@ExceptionHandler
 	public ResponseEntity<ResponseJson> handleException(CartActionException exc){

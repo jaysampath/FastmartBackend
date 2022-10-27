@@ -11,16 +11,6 @@ import com.services.fastmart.entity.User;
 import com.services.fastmart.rest.request.LoginRequest;
 
 public interface FastmartService {
-	
-	public User saveNewUser(User user);
-	
-	public User getUserByEmail(String userEmail);
-	
-	public boolean checkUserIsAuth(LoginRequest loginRequest);
-	
-	public String checkExistingUser(String email);
-	
-	public User updateUserPassword(String email,String password);
 
 	public List<Product> getAllItems();
 

@@ -1,5 +1,6 @@
 package com.services.fastmart.dao;
 
+import com.services.fastmart.commons.UserRole;
 import com.services.fastmart.entity.DatabaseFields;
 import com.services.fastmart.repository.UserRepository;
 import org.slf4j.Logger;
@@ -25,18 +26,14 @@ public class UserDaoImpl implements UserDao {
 	private final UserRepository repository;
 	private final MongoTemplate mongoTemplate;
 
-	private final PasswordEncoder passwordEncoder;
-
 	@Autowired
-	public UserDaoImpl(UserRepository repository, MongoTemplate mongoTemplate, PasswordEncoder passwordEncoder) {
+	public UserDaoImpl(UserRepository repository, MongoTemplate mongoTemplate) {
 		this.repository = repository;
 		this.mongoTemplate = mongoTemplate;
-		this.passwordEncoder = passwordEncoder;
 	}
 
 	@Override
 	public User registerUser(User user) {
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		User persistedUser = repository.save(user);
 		logger.info("New User Registered - {}" , persistedUser);
 		return persistedUser;
@@ -48,29 +45,17 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public boolean isUserAuthenticated(LoginRequest loginRequest) {
-		String givenPassword = loginRequest.getPassword();
-		User user = repository.findByUserEmail(loginRequest.getUserEmail());
-		if(user == null) {
-			throw new UserActionException("you are not a registered user, please signup");
-		}
-		String storedPasswordHashed = user.getPassword();
-		return passwordEncoder.matches(givenPassword, storedPasswordHashed);
-	}
-
-	@Override
 	public User getUserByEmail(String email) {
 		return repository.findByUserEmail(email);
 	}
 
 	@Override
 	public User updateUserPassword(String email,String password) {
-		String hashedPassword = passwordEncoder.encode(password);
 		Query query = new Query().addCriteria(Criteria.where(DatabaseFields.USER_EMAIL).is(email));
 		FindAndModifyOptions findAndModifyOptions = new FindAndModifyOptions();
 		findAndModifyOptions.returnNew(true);
 		logger.info("Password updated for user - {}",email);
-		return mongoTemplate.findAndModify(query, Update.update(DatabaseFields.USER_PASSWORD, hashedPassword), findAndModifyOptions, User.class);
+		return mongoTemplate.findAndModify(query, Update.update(DatabaseFields.USER_PASSWORD, password), findAndModifyOptions, User.class);
 	}
 
 }

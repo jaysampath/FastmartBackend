@@ -2,20 +2,26 @@ package com.services.fastmart.rest;
 
 import java.text.SimpleDateFormat;
 
+import com.services.fastmart.commons.UserRole;
+import com.services.fastmart.exception.JWTException;
+import com.services.fastmart.exception.UserActionException;
+import com.services.fastmart.rest.request.SignupRequest;
+import com.services.fastmart.rest.request.UpdatePasswordRequest;
+import com.services.fastmart.rest.response.SuccessfulLoginResponse;
+import com.services.fastmart.service.JwtTokenService;
+import com.services.fastmart.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 import com.services.fastmart.entity.User;
 import com.services.fastmart.rest.request.LoginRequest;
 import com.services.fastmart.rest.response.ResponseJson;
-import com.services.fastmart.service.FastmartService;
 
 @RestController
 @CrossOrigin
@@ -23,23 +29,51 @@ import com.services.fastmart.service.FastmartService;
 public class UserRestController {
 
 	@Autowired
-	private FastmartService fastmartService;
+	private UserService userService;
+
+	@Autowired
+	private JwtTokenService tokenProvider;
+
+	@Autowired
+	private AuthenticationManager authenticationManager;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	SimpleDateFormat sdf = new SimpleDateFormat();
 
 	@PostMapping("/signup")
-	public ResponseJson newUserRegister(@RequestBody User user) {
-		User newUser = fastmartService.saveNewUser(user);
+	public SuccessfulLoginResponse newUserRegister(@RequestBody SignupRequest signupRequest) {
+
+		String actualPassword = signupRequest.getPassword();
+		signupRequest.setPassword(passwordEncoder.encode(actualPassword));
+
+		User newUser = userService.saveNewUser(mapSignupRequestToUser(signupRequest));
+
 		if(newUser==null) {
-			return new ResponseJson(HttpStatus.NOT_ACCEPTABLE.value(),"Error while registering",String.valueOf(sdf.format(System.currentTimeMillis())));
+			throw new UserActionException("Error while registering. Please try again after sometime");
 		}
-		return new ResponseJson(HttpStatus.ACCEPTED.value(),"User account created successfully",String.valueOf(sdf.format(System.currentTimeMillis())));
+
+		String token = authenticateAndGetToken(signupRequest.getUserEmail(), actualPassword);
+
+		return new SuccessfulLoginResponse(newUser.getUserEmail(), token, newUser.getUserName(), newUser.getPrettyName());
+	}
+
+	private User mapSignupRequestToUser(SignupRequest signupRequest) {
+		User user = new User();
+		user.setUserEmail(signupRequest.getUserEmail());
+		user.setPassword(signupRequest.getPassword());
+		user.setUserName(signupRequest.getUserName());
+		user.setPrettyName( StringUtils.hasText(signupRequest.getPrettyName())
+				? signupRequest.getPrettyName() : signupRequest.getUserName() );
+		user.setRole(UserRole.USER.name());
+		return user;
 	}
 
 	@GetMapping("/check/{email}")
 	public ResponseJson checkExistingUser(@PathVariable String email) {
-		String check = fastmartService.checkExistingUser(email);
-		if (check.equals("no")) {
+		boolean check = userService.checkExistingUser(email);
+		if (!check) {
 			return new ResponseJson(HttpStatus.ACCEPTED.value(), "user does not exist. Allow to register",
 					String.valueOf(sdf.format(System.currentTimeMillis())));
 		}
@@ -47,28 +81,44 @@ public class UserRestController {
 				String.valueOf(sdf.format(System.currentTimeMillis())));
 	}
 
-	@GetMapping("/{email}")
+	@GetMapping("/find/{email}")
 	public User getUserByEmail(@PathVariable String email) {
-		return fastmartService.getUserByEmail(email);
+		return userService.getUserByEmail(email);
 	}
 
 	@PostMapping("/login")
-	public ResponseJson checkUserIsAuth(@RequestBody LoginRequest loginRequest) {
-		boolean response = fastmartService.checkUserIsAuth(loginRequest);
-		ResponseJson loginResponse;
-		if (response) {
-			loginResponse = new ResponseJson(HttpStatus.ACCEPTED.value(), "login successful",
-					String.valueOf(sdf.format(System.currentTimeMillis())));
-			return loginResponse;
+	public SuccessfulLoginResponse checkUserIsAuth(@RequestBody LoginRequest loginRequest) {
+		User existingUser = userService.getUserByEmail(loginRequest.getUserEmail());
+
+		String token = authenticateAndGetToken(loginRequest.getUserEmail(), loginRequest.getPassword());
+
+		return new SuccessfulLoginResponse(existingUser.getUserEmail(), token, existingUser.getUserName(), existingUser.getPrettyName());
+	}
+
+	@GetMapping("/validate/token")
+	public SuccessfulLoginResponse validateToken(@RequestParam String accessToken) {
+		boolean isValid = tokenProvider.validateToken(accessToken);
+		if (!isValid) {
+			throw new JWTException("Invalid token or token expired. Please login in");
 		}
-		return new ResponseJson(HttpStatus.NOT_ACCEPTABLE.value(), "email and password combination is incorrect",
-				String.valueOf(sdf.format(System.currentTimeMillis())));
+		String email = tokenProvider.getUserEmailFromJWT(accessToken);
+
+		User user = userService.getUserByEmail(email);
+		return new SuccessfulLoginResponse(user.getUserEmail(), accessToken, user.getUserName(), user.getPrettyName());
 	}
 	
-	@GetMapping("/update/{email}/{password}")
-	public User updateUserPasswordAfterForgot(@PathVariable String email, @PathVariable String password) {
-		User user = fastmartService.updateUserPassword(email, password);
-		return user;
+	@PostMapping("/update/password")
+	public SuccessfulLoginResponse updateUserPasswordAfterForgot(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
+		User existingUser = userService.getUserByEmail(updatePasswordRequest.getUserEmail());
+		userService.updateUserPassword(updatePasswordRequest.getUserEmail(), passwordEncoder.encode(updatePasswordRequest.getNewPassword()));
+		String token = authenticateAndGetToken(existingUser.getUserEmail(), updatePasswordRequest.getNewPassword());
+		return new SuccessfulLoginResponse(existingUser.getUserEmail(), token, existingUser.getUserName(), existingUser.getPrettyName());
+	}
+
+	private String authenticateAndGetToken(String email, String password) {
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(email, password));
+		return tokenProvider.generateToken(authentication);
 	}
 
 }
