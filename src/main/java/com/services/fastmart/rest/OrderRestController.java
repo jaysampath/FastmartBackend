@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.services.fastmart.entity.Order;
-import com.services.fastmart.entity.OrderItem;
-import com.services.fastmart.service.EcommerceService;
+import com.services.fastmart.entity.OrderProduct;
+import com.services.fastmart.service.FastmartService;
 
 @RestController
 @RequestMapping("/order")
@@ -20,38 +20,32 @@ import com.services.fastmart.service.EcommerceService;
 public class OrderRestController {
 	
 	@Autowired
-	private EcommerceService eCommerceService;
+	private FastmartService fastmartService;
 	
 	
 	@PostMapping("/orders")
 	public Order saveOrder(@RequestBody Order order) {
-		Order insertedOrder = eCommerceService.saveOrder(order);
-		return insertedOrder;
+		return fastmartService.saveOrder(order);
 	}
 	
 	@GetMapping("/orders/{userEmail:.+}")
 	public List<Order> getAllOrders(@PathVariable String userEmail){
-		List<Order> orders = eCommerceService.getAllOrders(userEmail);
-		return orders;
+		return fastmartService.getAllOrders(userEmail);
 	}
 	
 	@GetMapping("/orders/id/{orderId}")
-	public Order getOrderById(@PathVariable int orderId) {
-		Order order = eCommerceService.getOrder("", orderId);
-		return order;
+	public Order getOrderById(@PathVariable String orderId) {
+		return fastmartService.getOrder("", orderId);
 	}
 	
 	@GetMapping("/orders/id/items/{orderId}")
-	public List<OrderItem> getOrderItems(@PathVariable int orderId){
-		List<OrderItem> orderItems = eCommerceService.getOrderItems("", orderId);
-		
-		return orderItems;
+	public List<OrderProduct> getOrderItems(@PathVariable String orderId){
+		return fastmartService.getOrderProducts("", orderId);
 	}
 	
 	@GetMapping("/latest/{userEmail}")
 	public Order getLatestOrder(@PathVariable String userEmail) {
-		Order latestOrder = eCommerceService.getLatestOrder(userEmail);
-		return latestOrder;
+		return fastmartService.getLatestOrder(userEmail);
 	}
 
 }

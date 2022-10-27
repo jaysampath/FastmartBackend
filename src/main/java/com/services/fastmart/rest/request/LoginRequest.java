@@ -1,16 +1,16 @@
-package com.services.fastmart.helpers;
+package com.services.fastmart.rest.request;
 
-public class LoginInput {
+public class LoginRequest {
 	
 	private String userEmail;
 	
 	private String password;
 	
-	public LoginInput() {
+	public LoginRequest() {
 		
 	}
 
-	public LoginInput(String userEmail, String password) {
+	public LoginRequest(String userEmail, String password) {
 		this.userEmail = userEmail;
 		this.password = password;
 	}

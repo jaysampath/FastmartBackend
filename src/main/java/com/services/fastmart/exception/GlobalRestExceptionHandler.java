@@ -1,7 +1,8 @@
-package com.services.fastmart.helpers;
+package com.services.fastmart.exception;
 
 import java.text.SimpleDateFormat;
 
+import com.services.fastmart.rest.response.ResponseJson;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -32,15 +33,15 @@ public class GlobalRestExceptionHandler {
 		return new ResponseEntity<ResponseJson>(response,HttpStatus.NOT_ACCEPTABLE);
 	}
 	
-	@ExceptionHandler
-	public ResponseEntity<ResponseJson> handleException(Exception exc){
-		ResponseJson response = new ResponseJson(
-				HttpStatus.BAD_REQUEST.value(),
-				exc.getMessage(),
-				String.valueOf(sdf.format(System.currentTimeMillis()))
-				);
-		return new ResponseEntity<ResponseJson>(response,HttpStatus.NOT_ACCEPTABLE);
-	}
+//	@ExceptionHandler
+//	public ResponseEntity<ResponseJson> handleException(Exception exc){
+//		ResponseJson response = new ResponseJson(
+//				HttpStatus.BAD_REQUEST.value(),
+//				exc.getMessage(),
+//				String.valueOf(sdf.format(System.currentTimeMillis()))
+//				);
+//		return new ResponseEntity<ResponseJson>(response,HttpStatus.NOT_ACCEPTABLE);
+//	}
 	
 	@ExceptionHandler
 	public ResponseEntity<ResponseJson> handleException(CartActionException exc){

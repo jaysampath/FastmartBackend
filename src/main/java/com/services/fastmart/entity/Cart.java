@@ -3,78 +3,68 @@ package com.services.fastmart.entity;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection="customer_cart")
+@Document(collection = DatabaseFields.CART_COLLECTION)
 public class Cart {
-	
-	@Transient
-    public static final String SEQUENCE_NAME = "customer_cart_sequence";
-	
-	
-	@Id
-	private long cartId;
-	
-	
-	private String userEmail;
-	
-	
-	private double cartAmount;
-	
-	
-	private List<CartItem> cartItems;
-	
-	public Cart() {
-		
-	}
 
-	public Cart(String userEmail, List<CartItem> cartItems, double cartAmount) {
-		this.userEmail = userEmail;
-		this.cartAmount = cartAmount;
-		this.cartItems = cartItems;
-	}
+    @Id
+    private String cartId;
 
-	public long getCartId() {
-		return cartId;
-	}
+    @Field(DatabaseFields.USER_EMAIL)
+    private String userEmail;
 
-	public void setCartId(long cartId) {
-		this.cartId = cartId;
-	}
+    @Field(DatabaseFields.CART_AMOUNT)
+    private double cartAmount;
 
-	public String getUserEmail() {
-		return userEmail;
-	}
+    @Field(DatabaseFields.CART_PRODUCTS)
+    private List<CartProduct> cartProducts;
 
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
-	}
+    public Cart() {}
 
-	public List<CartItem> getCartItems() {
-		return cartItems;
-	}
+    public Cart(String userEmail, List<CartProduct> cartProducts, double cartAmount) {
+        this.userEmail = userEmail;
+        this.cartAmount = cartAmount;
+        this.cartProducts = cartProducts;
+    }
 
-	public void setCartItems(List<CartItem> cartItems) {
-		this.cartItems = cartItems;
-	}
+    public String getCartId() {
+        return cartId;
+    }
 
-	public double getCartAmount() {
-		return cartAmount;
-	}
+    public void setCartId(String cartId) {
+        this.cartId = cartId;
+    }
 
-	public void setCartAmount(double cartAmount) {
-		this.cartAmount = cartAmount;
-	}
+    public String getUserEmail() {
+        return userEmail;
+    }
 
-	@Override
-	public String toString() {
-		return "Cart [cartId=" + cartId + ", userEmail=" + userEmail + ", cartAmount=" + cartAmount + ", cartItems="
-				+ cartItems + "]";
-	}
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
 
-	
-	
-	
+    public List<CartProduct> getCartProducts() {
+        return cartProducts;
+    }
+
+    public void setCartProducts(List<CartProduct> cartProducts) {
+        this.cartProducts = cartProducts;
+    }
+
+    public double getCartAmount() {
+        return cartAmount;
+    }
+
+    public void setCartAmount(double cartAmount) {
+        this.cartAmount = cartAmount;
+    }
+
+    @Override
+    public String toString() {
+        return "Cart [cartId=" + cartId + ", userEmail=" + userEmail + ", cartAmount=" + cartAmount + ", cartProducts="
+                + cartProducts + "]";
+    }
 
 }

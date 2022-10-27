@@ -1,4 +1,4 @@
-package com.services.fastmart.helpers;
+package com.services.fastmart.rest.response;
 
 public class ResponseJson {
 	

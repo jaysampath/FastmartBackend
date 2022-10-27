@@ -1,7 +1,6 @@
 package com.services.fastmart.rest;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 
 import javax.mail.MessagingException;
 
@@ -13,9 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.services.fastmart.helpers.EmailActionException;
-import com.services.fastmart.helpers.ResponseJson;
-import com.services.fastmart.service.EcommerceService;
+import com.services.fastmart.exception.EmailActionException;
+import com.services.fastmart.rest.response.ResponseJson;
 import com.services.fastmart.service.EmailService;
 import com.services.fastmart.service.OtpService;
 
@@ -43,7 +41,6 @@ public class OtpRestController {
 		try {
 			emailService.sendMail(userEmail, otp);
 		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
 			throw new EmailActionException("couldn't not send email. " + e.getMessage());
 		}
 		return 1;
@@ -71,7 +68,6 @@ public class OtpRestController {
 		try {
 			emailService.sendForgotPasswordOtpMail(email, otp);
 		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
 			throw new EmailActionException("couldn't not send email. " + e.getMessage());
 		}
 		return otp;

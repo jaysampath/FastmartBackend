@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.services.fastmart.helpers.OtpActionException;
+import com.services.fastmart.exception.OtpActionException;
 
 @Service
 public class OtpService {

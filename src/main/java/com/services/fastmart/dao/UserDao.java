@@ -1,18 +1,18 @@
 package com.services.fastmart.dao;
 
 import com.services.fastmart.entity.User;
-import com.services.fastmart.helpers.LoginInput;
+import com.services.fastmart.rest.request.LoginRequest;
  
 public interface UserDao {
 
-	public User newUserRegister(User user);
+	User registerUser(User user);
 
-	public boolean checkUserExists(String userEmail);
+	boolean checkUserExists(String userEmail);
 
-	public String isUserAuthenticated(LoginInput loginInput);
+	boolean isUserAuthenticated(LoginRequest loginRequest);
 
-	public User getUserByEmail(String email);
+	User getUserByEmail(String email);
 	
-	public User updateUserPassword(String email,String password);
+	User updateUserPassword(String email,String password);
 
 }

@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.services.fastmart.entity.User;
-import com.services.fastmart.helpers.LoginInput;
-import com.services.fastmart.helpers.ResponseJson;
-import com.services.fastmart.service.EcommerceService;
+import com.services.fastmart.rest.request.LoginRequest;
+import com.services.fastmart.rest.response.ResponseJson;
+import com.services.fastmart.service.FastmartService;
 
 @RestController
 @CrossOrigin
@@ -23,13 +23,13 @@ import com.services.fastmart.service.EcommerceService;
 public class UserRestController {
 
 	@Autowired
-	private EcommerceService eCommerceService;
+	private FastmartService fastmartService;
 
 	SimpleDateFormat sdf = new SimpleDateFormat();
 
 	@PostMapping("/signup")
 	public ResponseJson newUserRegister(@RequestBody User user) {
-		User newUser = eCommerceService.saveNewUser(user);
+		User newUser = fastmartService.saveNewUser(user);
 		if(newUser==null) {
 			return new ResponseJson(HttpStatus.NOT_ACCEPTABLE.value(),"Error while registering",String.valueOf(sdf.format(System.currentTimeMillis())));
 		}
@@ -38,7 +38,7 @@ public class UserRestController {
 
 	@GetMapping("/check/{email}")
 	public ResponseJson checkExistingUser(@PathVariable String email) {
-		String check = eCommerceService.checkExistingUser(email);
+		String check = fastmartService.checkExistingUser(email);
 		if (check.equals("no")) {
 			return new ResponseJson(HttpStatus.ACCEPTED.value(), "user does not exist. Allow to register",
 					String.valueOf(sdf.format(System.currentTimeMillis())));
@@ -49,15 +49,14 @@ public class UserRestController {
 
 	@GetMapping("/{email}")
 	public User getUserByEmail(@PathVariable String email) {
-		User user = eCommerceService.getUserByEmail(email);
-		return user;
+		return fastmartService.getUserByEmail(email);
 	}
 
 	@PostMapping("/login")
-	public ResponseJson checkUserIsAuth(@RequestBody LoginInput loginInput) {
-		String response = eCommerceService.checkUserIsAuth(loginInput);
+	public ResponseJson checkUserIsAuth(@RequestBody LoginRequest loginRequest) {
+		boolean response = fastmartService.checkUserIsAuth(loginRequest);
 		ResponseJson loginResponse;
-		if (response.equals("yes")) {
+		if (response) {
 			loginResponse = new ResponseJson(HttpStatus.ACCEPTED.value(), "login successful",
 					String.valueOf(sdf.format(System.currentTimeMillis())));
 			return loginResponse;
@@ -68,7 +67,7 @@ public class UserRestController {
 	
 	@GetMapping("/update/{email}/{password}")
 	public User updateUserPasswordAfterForgot(@PathVariable String email, @PathVariable String password) {
-		User user = eCommerceService.updateUserPassword(email, password);
+		User user = fastmartService.updateUserPassword(email, password);
 		return user;
 	}
 

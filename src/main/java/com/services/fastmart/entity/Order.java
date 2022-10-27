@@ -2,104 +2,85 @@ package com.services.fastmart.entity;
 
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection="customer_order")
+@Document(collection = DatabaseFields.ORDER_COLLECTION)
 public class Order {
-	
-	@Transient
-    public static final String SEQUENCE_NAME = "order_sequence";
-	
+
     @Id
-	private String orderId;
-	
+    private ObjectId orderId;
 
-	private String userEmail; 
-	
-	private String orderTime;
-	
-	
+    @Field(DatabaseFields.USER_EMAIL)
+    private String userEmail;
 
-	private double orderAmount;
-	
-	private List<OrderItem> orderItems;
-	
-	private OrderAddress orderAddress;
-	
-	public Order() {
-		
-	}
+    @Field(DatabaseFields.ORDER_TIME)
+    private String orderTime;
 
-	public Order(String userEmail, String orderTime, double orderAmount, OrderAddress orderAddress,
-			List<OrderItem> orderItems) {
-		this.userEmail = userEmail;
-		this.orderTime = orderTime;
-		this.orderAmount = orderAmount;
-		this.orderAddress = orderAddress;
-		this.orderItems = orderItems;
-	}
+    @Field(DatabaseFields.ORDER_AMOUNT)
+    private double orderAmount;
 
+    @Field(DatabaseFields.ORDER_PRODUCTS)
+    private List<OrderProduct> orderProducts;
 
+    @Field(DatabaseFields.ORDER_ADDRESS)
+    private OrderAddress orderAddress;
 
-	public OrderAddress getOrderAddress() {
-		return orderAddress;
-	}
+    public OrderAddress getOrderAddress() {
+        return orderAddress;
+    }
 
-	public void setOrderAddress(OrderAddress orderAddress) {
-		this.orderAddress = orderAddress;
-	}
+    public void setOrderAddress(OrderAddress orderAddress) {
+        this.orderAddress = orderAddress;
+    }
 
-	public String getOrderId() {
-		return orderId;
-	}
+    public String getOrderId() {
+        return orderId != null ? orderId.toString() : null;
+    }
 
-	public void setOrderId(String orderId) {
-		this.orderId = orderId;
-	}
+    public void setOrderId(String orderId) {
+        this.orderId = new ObjectId(orderId);
+    }
 
-	public String getUserEmail() {
-		return userEmail;
-	}
+    public String getUserEmail() {
+        return userEmail;
+    }
 
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
-	}
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
 
-	public String getOrderTime() {
-		return orderTime;
-	}
+    public String getOrderTime() {
+        return orderTime;
+    }
 
-	public void setOrderTime(String orderTime) {
-		this.orderTime = orderTime;
-	}
+    public void setOrderTime(String orderTime) {
+        this.orderTime = orderTime;
+    }
 
-	public double getOrderAmount() {
-		return orderAmount;
-	}
+    public double getOrderAmount() {
+        return orderAmount;
+    }
 
-	public void setOrderAmount(double orderAmount) {
-		this.orderAmount = orderAmount;
-	}
+    public void setOrderAmount(double orderAmount) {
+        this.orderAmount = orderAmount;
+    }
 
-	public List<OrderItem> getOrderItems() {
-		return orderItems;
-	}
+    public List<OrderProduct> getOrderProducts() {
+        return orderProducts;
+    }
 
-	public void setOrderItems(List<OrderItem> orderItems) {
-		this.orderItems = orderItems;
-	}
+    public void setOrderProducts(List<OrderProduct> orderProducts) {
+        this.orderProducts = orderProducts;
+    }
 
-	@Override
-	public String toString() {
-		return "Order [orderId=" + orderId + ", userEmail=" + userEmail + ", orderTime=" + orderTime + ", orderAmount="
-				+ orderAmount + ", orderAddress=" + orderAddress + ", orderItems=" + orderItems + "]";
-	}
+    @Override
+    public String toString() {
+        return "Order [orderId=" + orderId + ", userEmail=" + userEmail + ", orderTime=" + orderTime + ", orderAmount="
+                + orderAmount + ", orderAddress=" + orderAddress + ", orderProducts=" + orderProducts + "]";
+    }
 
-	
-	
-	
-	
 
 }

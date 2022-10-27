@@ -1,145 +1,129 @@
 package com.services.fastmart.dao;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import com.services.fastmart.entity.DatabaseFields;
+import com.services.fastmart.repository.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import com.services.fastmart.entity.Cart;
-import com.services.fastmart.entity.CartItem;
-import com.services.fastmart.service.SequenceGeneratorService;
+import com.services.fastmart.entity.CartProduct;
 
-@Repository
+@Component
 public class CartDaoImpl implements CartDao {
 
+	private final MongoTemplate mongoTemplate;
+	private final CartRepository repository;
+
 	@Autowired
-	private MongoTemplate mongoTemplate;
-	
-	
-	
+	public CartDaoImpl(MongoTemplate mongoTemplate, CartRepository repository) {
+		this.mongoTemplate = mongoTemplate;
+		this.repository = repository;
+	}
+
 	@Override
 	public Cart getCart(String userEmail) {
-		
-		Query query = new Query();
-	    query.addCriteria(Criteria.where("userEmail").is(userEmail));
-	    List<Cart> cartCheck = mongoTemplate.find(query, Cart.class);
-	    if(cartCheck.size()==0) {
-	    	Cart newCart = createNewUserCart(userEmail);
-	    	return newCart;
+		Cart cartCheck = repository.findCartByUserEmail(userEmail);
+	    if(cartCheck == null) {
+			return createNewUserCart(userEmail);
 	    }
-	    
-	  return cartCheck.get(0);
-	}
-
-	
-
-	@Override
-	public List<CartItem> getCartItems(String userEmail, int cartId) {
-		
-		Cart cart = getCart(userEmail);
-		List<CartItem> cartItems = cart.getCartItems();
-		return cartItems;
+	  return cartCheck;
 	}
 
 	@Override
-	public Cart changeCartItemQuantity(String userEmail,int itemId, int change) {
+	public List<CartProduct> getCartItems(String userEmail, String cartId) {
+		Cart cart = getCart(userEmail);
+		return cart.getCartProducts();
+	}
+
+	@Override
+	public Cart changeCartItemQuantity(String userEmail,String productId, int change) {
 		
 		Cart cart = getCart(userEmail);
-		List<CartItem> cartItems = cart.getCartItems();
-		List<CartItem> newCartItems = new ArrayList<>();
-		for(CartItem cartItem: cartItems) {
-			if(cartItem.getItemId()==itemId) {
-				if(change==-1 && cartItem.getItemQuantity()<=1) {
-					deleteItemInCart(userEmail,cartItem.getItemId(),cart.getCartId());
+		List<CartProduct> cartProducts = cart.getCartProducts();
+		List<CartProduct> newCartProducts = new ArrayList<>();
+		for(CartProduct cartProduct : cartProducts) {
+			if(cartProduct.getProductId().equals(productId)) {
+				if(change==-1 && cartProduct.getProductQuantity()<=1) {
+					deleteItemInCart(userEmail, cartProduct.getProductId(),cart.getCartId());
 				}else {
-					int prevItemQuantity = cartItem.getItemQuantity();
-					cartItem.setItemQuantity( prevItemQuantity + change );
-					newCartItems.add(cartItem);
+					int prevItemQuantity = cartProduct.getProductQuantity();
+					cartProduct.setProductQuantity( prevItemQuantity + change );
+					newCartProducts.add(cartProduct);
 				}
 				
 			}else {
-				newCartItems.add(cartItem);
+				newCartProducts.add(cartProduct);
 			}
 			
 		}
-		cart.setCartItems(newCartItems);
-		mongoTemplate.save(cart, "customer_cart");
+		cart.setCartProducts(newCartProducts);
+		mongoTemplate.save(cart, DatabaseFields.CART_COLLECTION);
 		return cart;
 	}
 
 	@Override
-	public Cart deleteItemInCart(String userEmail, long itemId, long cartId) {
-		
+	public Cart deleteItemInCart(String userEmail, String itemId, String cartId) {
 		Cart cart = getCart(userEmail);
-		List<CartItem> cartItems = cart.getCartItems();
+		List<CartProduct> cartProducts = cart.getCartProducts();
 		//System.out.println(cartItems);
-		List<CartItem> newCartItems = new ArrayList<>();
-		for(CartItem item: cartItems) {
-			if(item.getItemId()!=itemId) {
-				newCartItems.add(item);
+		List<CartProduct> newCartProducts = new ArrayList<>();
+		for(CartProduct item: cartProducts) {
+			if(!item.getProductId().equals(itemId)) {
+				newCartProducts.add(item);
 			}
 		}
-		cart.setCartItems(newCartItems);
-	     mongoTemplate.save(cart,"customer_cart");
+		cart.setCartProducts(newCartProducts);
+	     mongoTemplate.save(cart, DatabaseFields.CART_COLLECTION);
 		return cart;
 	}
 
 	@Override
-	public Cart addItemToCart(String userEmail,CartItem cartItem) {
-		
+	public Cart addItemToCart(String userEmail, CartProduct cartProduct) {
 		Cart cart = getCart(userEmail);
-	    List<CartItem> existed = cart.getCartItems();
-	    List<CartItem> newCartItems = new ArrayList<>();
+	    List<CartProduct> existed = cart.getCartProducts();
+	    List<CartProduct> newCartProducts = new ArrayList<>();
 	    boolean flag=false;
-	    for(CartItem cItem: existed) {
-	    	if(cItem.getItemId()==cartItem.getItemId()) {
-	    		int initialQuantity = cItem.getItemQuantity();
-		    	int finalQuantity = initialQuantity + cartItem.getItemQuantity();
-		    	cItem.setItemQuantity(finalQuantity);
-		    	newCartItems.add(cItem);
+	    for(CartProduct cItem: existed) {
+	    	if(cItem.getProductId().equals(cartProduct.getProductId())) {
+	    		int initialQuantity = cItem.getProductQuantity();
+		    	int finalQuantity = initialQuantity + cartProduct.getProductQuantity();
+		    	cItem.setProductQuantity(finalQuantity);
+		    	newCartProducts.add(cItem);
 		    	flag=true;
 	    	}else {
-	    		newCartItems.add(cItem);
+	    		newCartProducts.add(cItem);
 	    	}
 	    }
-	    if(flag==false) {
-	    	newCartItems.add(cartItem);
+	    if(!flag) {
+	    	newCartProducts.add(cartProduct);
 	    }
 	    
-	    cart.setCartItems(newCartItems);
-        mongoTemplate.save(cart,"customer_cart");
+	    cart.setCartProducts(newCartProducts);
+        mongoTemplate.save(cart, DatabaseFields.CART_COLLECTION);
         return cart;
 	}
 
 	@Override
-	public double cartAmount(double totalAmount, String userEmail) {
-		
-		Query query = new Query();
-		query.addCriteria(Criteria.where("userEmail").is(userEmail));
+	public double updateCartAmount(double totalAmount, String userEmail) {
+		Query query = new Query().addCriteria(Criteria.where(DatabaseFields.USER_EMAIL).is(userEmail));
 		Update update = new Update();
-		update.set("cartAmount", totalAmount);
+		update.set(DatabaseFields.CART_AMOUNT, totalAmount);
 		mongoTemplate.updateFirst(query, update, Cart.class);
 		return totalAmount;
 	}
 
-
 	@Override
 	public Cart createNewUserCart(String userEmail) {
-		
-		List<CartItem> tempCartItems = new ArrayList<>();
-		Cart cart = new Cart(userEmail,tempCartItems,0);
-		cart.setCartId(SequenceGeneratorService.generateSequence(Cart.SEQUENCE_NAME));
-		mongoTemplate.insert(cart, "customer_cart");	   
-		return cart;
+		Cart cart = new Cart(userEmail, Collections.emptyList(),0);
+		return repository.save(cart);
 	}
-
-	
-
-
 
 }

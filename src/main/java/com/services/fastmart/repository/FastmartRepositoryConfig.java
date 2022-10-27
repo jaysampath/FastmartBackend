@@ -5,5 +5,5 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @Configuration
 @EnableMongoRepositories(basePackages = "com.services.fastmart.repository")
-public class MongoRepositoryConfig {
+public class FastmartRepositoryConfig {
 }

@@ -1,4 +1,4 @@
-package com.services.fastmart.helpers;
+package com.services.fastmart.commons;
 
 import java.io.File;
 import java.nio.file.Files;

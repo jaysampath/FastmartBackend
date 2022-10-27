@@ -1,78 +1,84 @@
 package com.services.fastmart.entity;
 
+import org.springframework.data.mongodb.core.mapping.Field;
+
 public class OrderAddress {
 
-	private String name;
+    @Field(DatabaseFields.ORDER_CUSTOMER_NAME)
+    private String customerName;
 
-	private String mobileNumber;
+    @Field(DatabaseFields.ORDER_CUSTOMER_MOBILE)
+    private String customerMobile;
 
-	private String address;
+    @Field(DatabaseFields.ADDRESS)
+    private String address;
 
-	private String city;
+    @Field(DatabaseFields.ADDRESS_CITY)
+    private String city;
 
-	private String state;
+    @Field(DatabaseFields.ADDRESS_STATE)
+    private String state;
 
-	private int pincode;
+    @Field(DatabaseFields.ADDRESS_PINCODE)
+    private String pincode;
 
-	public OrderAddress() {
+    public String getCustomerName() {
+        return customerName;
+    }
 
-	}
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
 
-	public OrderAddress(String name, String mobileNumber, String address, String city, String state, int pincode) {
-		this.name = name;
-		this.mobileNumber = mobileNumber;
-		this.address = address;
-		this.city = city;
-		this.state = state;
-		this.pincode = pincode;
-	}
+    public String getCustomerMobile() {
+        return customerMobile;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setCustomerMobile(String customerMobile) {
+        this.customerMobile = customerMobile;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public String getMobileNumber() {
-		return mobileNumber;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	public void setMobileNumber(String mobileNumber) {
-		this.mobileNumber = mobileNumber;
-	}
+    public String getCity() {
+        return city;
+    }
 
-	public String getAddress() {
-		return address;
-	}
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+    public String getState() {
+        return state;
+    }
 
-	public String getCity() {
-		return city;
-	}
+    public void setState(String state) {
+        this.state = state;
+    }
 
-	public void setCity(String city) {
-		this.city = city;
-	}
+    public String getPincode() {
+        return pincode;
+    }
 
-	public String getState() {
-		return state;
-	}
+    public void setPincode(String pincode) {
+        this.pincode = pincode;
+    }
 
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public int getPincode() {
-		return pincode;
-	}
-
-	public void setPincode(int pincode) {
-		this.pincode = pincode;
-	}
-
+    @Override
+    public String toString() {
+        return "OrderAddress{" +
+                "customerName='" + customerName + '\'' +
+                ", customerMobile='" + customerMobile + '\'' +
+                ", address='" + address + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", pincode='" + pincode + '\'' +
+                '}';
+    }
 }

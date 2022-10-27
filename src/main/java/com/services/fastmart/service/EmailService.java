@@ -79,7 +79,7 @@ public class EmailService {
 	    	context.setVariable("email",order.getUserEmail());
 	    	context.setVariable("orderAddress", order.getOrderAddress());
 	    	context.setVariable("amount", order.getOrderAmount());
-	    	context.setVariable("items", order.getOrderItems());
+	    	context.setVariable("products", order.getOrderProducts());
 	    	context.setVariable("srcUrl", "https://drive.google.com/uc?export=view&id=");
 	    	
 	    	String process = templateEngine.process("orderPlaced", context);
@@ -89,7 +89,6 @@ public class EmailService {
 	    	helper.setText(process,true);
 	    	helper.setTo(order.getUserEmail());
 	    	javaMailSender.send(mimeMessage);
-	    	
 	    }
 
 }

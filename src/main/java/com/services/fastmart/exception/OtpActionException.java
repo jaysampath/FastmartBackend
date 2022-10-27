@@ -1,4 +1,4 @@
-package com.services.fastmart.helpers;
+package com.services.fastmart.exception;
 
 public class OtpActionException extends RuntimeException {
 	

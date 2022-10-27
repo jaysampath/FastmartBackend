@@ -1,64 +1,73 @@
 package com.services.fastmart.dao;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
+import com.services.fastmart.entity.DatabaseFields;
+import com.services.fastmart.repository.OrderRepository;
+import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import com.services.fastmart.entity.Order;
-import com.services.fastmart.entity.OrderItem;
+import com.services.fastmart.entity.OrderProduct;
+import org.springframework.util.CollectionUtils;
 
-@Repository
+@Component
 public class OrderDaoImpl implements OrderDao {
-	
+
+	Logger logger = LoggerFactory.getLogger(OrderDaoImpl.class);
+	private final MongoTemplate mongoTemplate;
+
+	private final OrderRepository orderRepository;
+
 	@Autowired
-	private MongoTemplate mongoTemplate;
-	
+	public OrderDaoImpl(MongoTemplate mongoTemplate, OrderRepository orderRepository) {
+		this.mongoTemplate = mongoTemplate;
+		this.orderRepository = orderRepository;
+	}
+
 	@Override
 	public Order saveOrder(Order order) {
-		
-		mongoTemplate.insert(order, "customer_order");
-		return order;
+		Order persistedOrder = orderRepository.save(order);
+		logger.info("Persisted order - {}", persistedOrder);
+		return persistedOrder;
 	}
 
 	@Override
-	public List<OrderItem> getOrderItems(String userEmail, int orderId) {
-		
-		Order order = mongoTemplate.findById(orderId, Order.class);
-		List<OrderItem> orderItems = order.getOrderItems();		
-		return orderItems;
+	public List<OrderProduct> getOrderItems(String userEmail, String orderId) {
+		Order order = getOrder(userEmail, orderId) ;
+		return  order != null ? order.getOrderProducts(): null;
 	}
-
 	@Override
-	public Order getOrder(String userEmail, int orderId) {
-		
-		Order order = mongoTemplate.findById(orderId, Order.class);
-		return order;
+	public Order getOrder(String userEmail, String orderId) {
+		Optional<Order> optionalOrder = orderRepository.findById(new ObjectId(orderId));
+		return optionalOrder.orElse(null);
 	}
 
 	@Override
 	public List<Order> getAllOrders(String userEmail) {
-		
-		Query query = new Query();
-		query.addCriteria(Criteria.where("userEmail").is(userEmail) );
-		List<Order> orders = mongoTemplate.find(query, Order.class);		
-		return orders;
+		Sort sort = Sort.by(Direction.DESC, DatabaseFields.ORDER_TIME);
+		return orderRepository.findAllByUserEmail(userEmail, sort);
 	}
 
 	@Override
 	public Order getLatestOrder(String userEmail) {
-		
 		Query query = new Query();
-		query.addCriteria(Criteria.where("userEmail").is(userEmail));
-		query.with(Sort.by(Direction.DESC, "orderTime"));
+		query.addCriteria(Criteria.where(DatabaseFields.USER_EMAIL).is(userEmail));
+		query.with(Sort.by(Direction.DESC, DatabaseFields.ORDER_TIME));
 		query.limit(1);
 		List<Order> latestOrders = mongoTemplate.find(query,Order.class);
-		if(latestOrders.size()==0) {
+		if(CollectionUtils.isEmpty(latestOrders)) {
 			return null;
 		}
 		return latestOrders.get(0);

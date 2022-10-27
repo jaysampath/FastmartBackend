@@ -78,17 +78,17 @@ li {
 			<h2>Your order Items</h2>
 		</div>
 		<div>
-			<ul th:each="item : ${items}"> 
+			<ul th:each="product : ${products}">
 				<li class="orderItemDiv">
 				<img
-					th:src="@{${srcUrl+item.orderItemImageUrl}}" alt="order item"
+					th:src="@{${srcUrl+product.productImageUrl}}" alt="order product"
 					class="orderItemImage" />
-					<h3 th:text="${item.orderItemName}" class="orderItemName"></h3>
+					<h3 th:text="${product.productName}" class="orderItemName"></h3>
 					<p class="orderItemQuantity">
-						Quantity: <b th:text="${item.orderItemQuantity}"></b>
+						Quantity: <b th:text="${product.productQuantity}"></b>
 					</p>
 					<p class="orderItemPrice">
-						price: <b th:text="${item.orderItemPrice}"></b>
+						price: <b th:text="${product.productPrice}"></b>
 					</p></li>
 			</ul>
 
@@ -96,8 +96,8 @@ li {
 		<hr />
 		<div class="addressDiv">
 		   <h2>Shipping Address</h2>
-		   <p> <b>  Customer Name: </b> <span th:text="@{${orderAddress.name}}"></span> </p>
-		   <p> <b>  Mobile Number </b> <span th:text="@{${orderAddress.mobileNumber}}"></span> </p>
+		   <p> <b>  Customer Name: </b> <span th:text="@{${orderAddress.customerName}}"></span> </p>
+		   <p> <b>  Mobile Number </b> <span th:text="@{${orderAddress.customerMobile}}"></span> </p>
 		   <p> <b>  Address: </b> <span th:text="@{${orderAddress.address}}"></span> </p>
 		   <p> <b>  City: </b> <span th:text="@{${orderAddress.city}}"></span> </p>
 		   <p> <b>  State: </b> <span th:text="@{${orderAddress.state}}"></span> </p>

@@ -1,44 +1,36 @@
 package com.services.fastmart.entity;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import lombok.ToString;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection="user")
-@ToString
+@Document(collection=DatabaseFields.USER_COLLECTION)
 public class User {
 	
-	@Transient
-	public static final String SEQUENCE_NAME = "user_sequence";
-	
 	@Id
-	@Indexed
-	private long userId;
-	
+	private String userId;
+
+	@Field(DatabaseFields.USERNAME)
 	private String userName;
-	
+
+	@Field(DatabaseFields.USER_PRETTY_NAME)
+	private String prettyName;
+
+	@Field(DatabaseFields.USER_EMAIL)
 	private String userEmail;
-	
+
+	@Field(DatabaseFields.USER_PASSWORD)
 	private String password;
-	
-	public User() {
-		
-	}
 
-	public User(String userName, String userEmail, String password) {
-		this.userName = userName;
-		this.userEmail = userEmail;
-		this.password = password;
-	}
+	@Field(DatabaseFields.USER_ROLE)
+	private String role;
 
-	public long getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(long userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
@@ -65,8 +57,31 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	
-	
 
+	public String getPrettyName() {
+		return prettyName != null ? prettyName : userName;
+	}
+
+	public void setPrettyName(String prettyName) {
+		this.prettyName = prettyName;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	@Override
+	public String toString() {
+		return "User{" +
+				"userId='" + userId + '\'' +
+				", userName='" + userName + '\'' +
+				", prettyName='" + prettyName + '\'' +
+				", userEmail='" + userEmail + '\'' +
+				", role='" + role + '\'' +
+				'}';
+	}
 }
