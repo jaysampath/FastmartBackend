@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import com.services.fastmart.rest.response.ResponseJson;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -32,6 +33,17 @@ public class GlobalRestExceptionHandler {
 				);
 		return new ResponseEntity<ResponseJson>(response,HttpStatus.NOT_ACCEPTABLE);
 	}
+
+	@ExceptionHandler
+	public ResponseEntity<ResponseJson> handleException(BadCredentialsException exc){
+		ResponseJson response = new ResponseJson(
+				HttpStatus.NOT_ACCEPTABLE.value(),
+				"username and password combination is incorrect",
+				String.valueOf(sdf.format(System.currentTimeMillis()))
+		);
+		return new ResponseEntity<ResponseJson>(response,HttpStatus.NOT_ACCEPTABLE);
+	}
+
 	
 	@ExceptionHandler
 	public ResponseEntity<ResponseJson> handleException(Exception exc){
