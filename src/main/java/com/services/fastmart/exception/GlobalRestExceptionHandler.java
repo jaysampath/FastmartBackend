@@ -17,11 +17,11 @@ public class GlobalRestExceptionHandler {
 	@ExceptionHandler
 	public ResponseEntity<ResponseJson> handleException(UserActionException exc){
 		ResponseJson response = new ResponseJson(
-				HttpStatus.NOT_ACCEPTABLE.value(),
+				HttpStatus.NOT_FOUND.value(),
 				exc.getMessage(),
 				String.valueOf(sdf.format(System.currentTimeMillis()))
 				);
-		return new ResponseEntity<ResponseJson>(response,HttpStatus.NOT_ACCEPTABLE);
+		return new ResponseEntity<ResponseJson>(response,HttpStatus.NOT_FOUND);
 	}
 	
 	@ExceptionHandler
@@ -93,6 +93,16 @@ public class GlobalRestExceptionHandler {
 				String.valueOf(sdf.format(System.currentTimeMillis()))
 				);
 		return new ResponseEntity<ResponseJson>(response,HttpStatus.NOT_ACCEPTABLE);
+	}
+
+	@ExceptionHandler
+	public ResponseEntity<ResponseJson> handleException(JWTException exc){
+		ResponseJson response = new ResponseJson(
+				HttpStatus.UNAUTHORIZED.value(),
+				exc.getMessage(),
+				String.valueOf(sdf.format(System.currentTimeMillis()))
+		);
+		return new ResponseEntity<ResponseJson>(response,HttpStatus.UNAUTHORIZED);
 	}
 
 }

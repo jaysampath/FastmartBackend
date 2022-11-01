@@ -60,6 +60,10 @@ public class Order {
         this.orderTime = orderTime;
     }
 
+    public Long getCreatedDate() {
+        return orderId != null ? (long) orderId.getTimestamp() : null;
+    }
+
     public double getOrderAmount() {
         return orderAmount;
     }

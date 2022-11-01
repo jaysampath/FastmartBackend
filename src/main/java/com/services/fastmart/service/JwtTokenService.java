@@ -1,6 +1,7 @@
 package com.services.fastmart.service;
 
 import com.services.fastmart.entity.DatabaseFields;
+import com.services.fastmart.exception.JWTException;
 import com.services.fastmart.security.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -66,19 +67,19 @@ public class JwtTokenService {
             return true;
         } catch (SignatureException ex) {
             logger.error("Invalid JWT signature");
-            throw new JwtException("Invalid JWT signature");
+            throw new JWTException("Invalid JWT signature");
         } catch (MalformedJwtException ex) {
             logger.error("Invalid JWT token");
-            throw new JwtException("Invalid JWT token");
+            throw new JWTException("Invalid JWT token");
         } catch (ExpiredJwtException ex) {
             logger.error("Expired JWT token");
-            throw new JwtException("Expired JWT token. Please login again");
+            throw new JWTException("Expired JWT token. Please login again");
         } catch (UnsupportedJwtException ex) {
             logger.error("Unsupported JWT token");
-            throw new JwtException("Unsupported JWT token");
+            throw new JWTException("Unsupported JWT token");
         } catch (IllegalArgumentException ex) {
             logger.error("JWT claims string is empty.");
-            throw new JwtException("JWT claims string is empty.");
+            throw new JWTException("JWT claims string is empty.");
         }
     }
 }

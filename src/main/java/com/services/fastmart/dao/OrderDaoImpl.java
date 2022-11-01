@@ -3,6 +3,7 @@ package com.services.fastmart.dao;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.services.fastmart.entity.DatabaseFields;
 import com.services.fastmart.repository.OrderRepository;
@@ -56,8 +57,8 @@ public class OrderDaoImpl implements OrderDao {
 
 	@Override
 	public List<Order> getAllOrders(String userEmail) {
-		Sort sort = Sort.by(Direction.DESC, DatabaseFields.ORDER_TIME);
-		return orderRepository.findAllByUserEmail(userEmail, sort);
+		List<Order> allOrders = orderRepository.findAllByUserEmail(userEmail);
+		return allOrders.stream().sorted((o1, o2) -> (int) (o1.getCreatedDate() - o2.getCreatedDate())).collect(Collectors.toList());
 	}
 
 	@Override

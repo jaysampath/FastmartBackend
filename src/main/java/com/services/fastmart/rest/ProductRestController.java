@@ -80,7 +80,7 @@ public class ProductRestController {
 		return fastmartService.getProductsBySearch(queryString);
 	}
 	
-	@GetMapping("/top/mobiles")
+	@GetMapping("/top-rated/mobiles")
 	public List<Product> getTopRatedMobiles(){
 		return fastmartService.getTopRatedMobiles();
 	}

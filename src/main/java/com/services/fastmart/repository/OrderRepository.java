@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends MongoRepository<Order, ObjectId> {
 
-    List<Order> findAllByUserEmail(String userEmail, Sort sort);
+    List<Order> findAllByUserEmail(String userEmail);
 }
