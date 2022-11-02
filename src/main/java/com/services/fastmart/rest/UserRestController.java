@@ -12,6 +12,7 @@ import com.services.fastmart.service.JwtTokenService;
 import com.services.fastmart.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -108,11 +109,11 @@ public class UserRestController {
 	}
 	
 	@PostMapping("/update/password")
-	public SuccessfulLoginResponse updateUserPasswordAfterForgot(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
+	public ResponseEntity updateUserPasswordAfterForgot(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
 		User existingUser = userService.getUserByEmail(updatePasswordRequest.getUserEmail());
 		userService.updateUserPassword(updatePasswordRequest.getUserEmail(), passwordEncoder.encode(updatePasswordRequest.getNewPassword()));
 		String token = authenticateAndGetToken(existingUser.getUserEmail(), updatePasswordRequest.getNewPassword());
-		return new SuccessfulLoginResponse(existingUser.getUserEmail(), token, existingUser.getUserName(), existingUser.getPrettyName());
+		return ResponseEntity.ok().build();
 	}
 
 	private String authenticateAndGetToken(String email, String password) {

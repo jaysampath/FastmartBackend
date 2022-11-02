@@ -148,7 +148,7 @@ public class ProductsDaoImpl implements ProductsDao {
 
     @Override
     public List<Product> getProductsBySearch(String queryString) {
-        String regexString = ".*" + queryString + "*.";
+        String regexString =  queryString ;
         Query query = new Query();
         query.addCriteria(new Criteria().orOperator(
                 Criteria.where(DatabaseFields.PRODUCT_NAME).regex(regexString, "i"),
