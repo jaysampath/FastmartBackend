@@ -61,7 +61,7 @@ public class UserRestController {
 	}
 
 	private User mapSignupRequestToUser(SignupRequest signupRequest) {
-		User user = new User();
+		User user = User.builder().build();
 		user.setUserEmail(signupRequest.getUserEmail());
 		user.setPassword(signupRequest.getPassword());
 		user.setUserName(signupRequest.getUserName());

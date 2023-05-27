@@ -36,5 +36,8 @@ public class Order {
     @Field(DatabaseFields.ORDER_ADDRESS)
     private OrderAddress orderAddress;
 
+    public Long getCreatedDate() {
+        return orderId != null ? (long) orderId.getTimestamp() : null;
+    }
 
 }

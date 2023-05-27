@@ -122,7 +122,11 @@ public class CartDaoImpl implements CartDao {
 
 	@Override
 	public Cart createNewUserCart(String userEmail) {
-		Cart cart = new Cart(userEmail, Collections.emptyList(),0);
+		Cart cart = Cart.builder()
+				.userEmail(userEmail)
+				.cartProducts(Collections.emptyList())
+				.cartAmount(0)
+				.build();
 		return repository.save(cart);
 	}
 
