@@ -182,8 +182,7 @@ public class FastmartServiceImpl implements FastmartService {
             cartProduct.setProductName(product.getProductName());
             cartProduct.setProductPrice(product.getPrice());
         }
-        Cart cart = cartDao.addItemToCart(userEmail, cartProduct);
-        return cart;
+        return cartDao.addItemToCart(userEmail, cartProduct);
     }
 
     @Override

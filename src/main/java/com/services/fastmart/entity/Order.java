@@ -2,12 +2,20 @@ package com.services.fastmart.entity;
 
 import java.util.List;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document(collection = DatabaseFields.ORDER_COLLECTION)
+@Getter
+@Setter
+@ToString
+@Builder
 public class Order {
 
     @Id
@@ -27,64 +35,6 @@ public class Order {
 
     @Field(DatabaseFields.ORDER_ADDRESS)
     private OrderAddress orderAddress;
-
-    public OrderAddress getOrderAddress() {
-        return orderAddress;
-    }
-
-    public void setOrderAddress(OrderAddress orderAddress) {
-        this.orderAddress = orderAddress;
-    }
-
-    public String getOrderId() {
-        return orderId != null ? orderId.toString() : null;
-    }
-
-    public void setOrderId(String orderId) {
-        this.orderId = new ObjectId(orderId);
-    }
-
-    public String getUserEmail() {
-        return userEmail;
-    }
-
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
-    }
-
-    public String getOrderTime() {
-        return orderTime;
-    }
-
-    public void setOrderTime(String orderTime) {
-        this.orderTime = orderTime;
-    }
-
-    public Long getCreatedDate() {
-        return orderId != null ? (long) orderId.getTimestamp() : null;
-    }
-
-    public double getOrderAmount() {
-        return orderAmount;
-    }
-
-    public void setOrderAmount(double orderAmount) {
-        this.orderAmount = orderAmount;
-    }
-
-    public List<OrderProduct> getOrderProducts() {
-        return orderProducts;
-    }
-
-    public void setOrderProducts(List<OrderProduct> orderProducts) {
-        this.orderProducts = orderProducts;
-    }
-
-    @Override
-    public String toString() {
-        return "Order [orderId=" + orderId + ", userEmail=" + userEmail + ", orderTime=" + orderTime + ", orderAmount="
-                + orderAmount + ", orderAddress=" + orderAddress + ", orderProducts=" + orderProducts + "]";
-    }
 
 
 }
