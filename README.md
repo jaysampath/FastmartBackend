@@ -4,7 +4,8 @@
 
 ## Tech Stack
 Java, Spring boot 2.6, Spring data MongoDB, Spring Security, JWT token authentication, Thymeleaf template engine, Java Mail Server 
-Google Guava, Heroku
+Google Guava, Heroku.
+* Database - A free cloud instance database from https://cloud.mongodb.com/ shared cluster
 
 ## Runbook
 1. Update your secrets in `src/main/resources/application-example.properties`
@@ -15,7 +16,9 @@ Google Guava, Heroku
 1. `SaveStarterProducts.java` bootstraps the app automatically with starter products present in `starter-products.json`
 
 ## Deployment
-This application is hosted on Heroku platform. Secrets are managed using Heroku's config vars. Check `src/main/resources/application-heroku.properties`
+<s>This application is hosted on Heroku platform. Secrets are managed using Heroku's config vars. Check `src/main/resources/application-heroku.properties`</s>
+
+<p>This dockerized application is now hosted on https://render.com/, secrets are passed as environment variables to the docker image</p>
 
 ## Future Work
 1. Creating Admin user and developing Admin access specific APIs
