@@ -44,5 +44,3 @@ HELP.md
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-#hide application.properties
-application.properties
